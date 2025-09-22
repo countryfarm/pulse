@@ -1,0 +1,59 @@
+## Build artifacts
+bin/
+obj/
+out/
+*.log
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vspscc
+*.vssscc
+
+## IDE folders
+.vs/
+.idea/
+*.swp
+
+## Rider
+*.DotSettings.user
+.idea/
+
+## Test results and coverage
+TestResults/
+coverage.*
+*.coverage
+*.coveragexml
+*.codecov
+*.lcov
+
+## Docker
+**/.docker/
+**/Dockerfile.*
+**/docker-compose.*
+
+## EF Core migrations (optional)
+Migrations/
+
+## SonarQube
+.sonar/
+.scannerwork/
+
+## Package management
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+
+## OS-specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+## Environment files
+.env
+.env.*
