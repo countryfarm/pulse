@@ -28,10 +28,18 @@ jobs:
     - name: Run tests with coverage
       run: dotnet test Pulse.sln --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./TestResults
 
-    - name: Report coverage summary
+    - name: Install ReportGenerator
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+    - name: Generate coverage summary
       run: |
-        echo "Coverage files generated:"
-        ls ./TestResults/**/coverage.cobertura.xml || true
+        reportgenerator \
+          -reports:./TestResults/**/coverage.cobertura.xml \
+          -targetdir:./coveragereport \
+          -reporttypes:TextSummary
+
+        echo "=== Coverage Summary ==="
+        cat ./coveragereport/Summary.txt
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
