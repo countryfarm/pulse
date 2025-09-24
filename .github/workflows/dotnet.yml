@@ -17,7 +17,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '9.0.x'   # adjust if you’re targeting 8.0 or another version
+        dotnet-version: '9.0.x'   # adjust if you’re targeting 8.0
 
     - name: Restore dependencies
       run: dotnet restore Pulse.sln
@@ -41,7 +41,15 @@ jobs:
         echo "=== Coverage Summary ==="
         cat ./coveragereport/Summary.txt
 
+    - name: Enforce coverage threshold
+      run: |
+        COVERAGE=$(grep -oP 'Line coverage: \K[0-9]+(\.[0-9]+)?' ./coveragereport/Summary.txt | head -1)
+        echo "Detected line coverage: $COVERAGE%"
+        THRESHOLD=70.0
+        awk -v c=$COVERAGE -v t=$THRESHOLD 'BEGIN { if (c+0 < t+0) { exit 1 } }'
+
     - name: Upload coverage report
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
