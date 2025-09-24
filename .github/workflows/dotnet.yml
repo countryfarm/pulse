@@ -1,0 +1,40 @@
+name: .NET Build, Test & Coverage
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'   # adjust if you’re targeting 8.0 or another version
+
+    - name: Restore dependencies
+      run: dotnet restore Pulse.sln
+
+    - name: Build
+      run: dotnet build Pulse.sln --no-restore --configuration Release
+
+    - name: Run tests with coverage
+      run: dotnet test Pulse.sln --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./TestResults
+
+    - name: Report coverage summary
+      run: |
+        echo "Coverage files generated:"
+        ls ./TestResults/**/coverage.cobertura.xml || true
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ./TestResults/**/coverage.cobertura.xml
