@@ -10,7 +10,7 @@ public class InventoryServiceTests
   [Fact]
   public void ReceiveStock_ShouldAddStockItem_AndMarkLineReceived()
   {
-    var part = new Part(1, "SKU-001", "MPN-001", "Test Part", minimumThreshold: 5);
+    var part = new Part(1, "SKU-001", "MPN-001", "Test Part", new Quantity(5m));
     var line = new PurchaseOrderLine(1, part.Id, new Quantity(10m));
     var location = new Location(1, "Main Bin", "Bin");
     var service = new InventoryService();
@@ -25,7 +25,7 @@ public class InventoryServiceTests
   [Fact]
   public void ConsumeStock_ShouldReduceQuantities_InFifoOrder()
   {
-    var part = new Part(2, "SKU-002", "MPN-002", "Test Part", minimumThreshold: 5);
+    var part = new Part(2, "SKU-002", "MPN-002", "Test Part", new Quantity(5m));
     var location = new Location(1, "Main Bin", "Bin");
     var service = new InventoryService();
 
@@ -45,7 +45,7 @@ public class InventoryServiceTests
   [Fact]
   public void ConsumeStock_ShouldThrow_WhenNotEnoughStock()
   {
-    var part = new Part(3, "SKU-003", "MPN-003", "Test Part", minimumThreshold: 5);
+    var part = new Part(3, "SKU-003", "MPN-003", "Test Part", new Quantity(5m));
     var location = new Location(1, "Main Bin", "Bin");
     var service = new InventoryService();
 
