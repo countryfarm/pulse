@@ -2,15 +2,18 @@ using Marap.Pulse.Domain.Common;
 
 namespace Marap.Pulse.Domain.Entities;
 
-public class Location : Entity<int>
+public class Location : Entity<LocationId>
 {
-  public string Name { get; private set; }
-  public string Type { get; private set; } // e.g. Bin, Cabinet, Lab
+  public string Name { get; private set; } = null!;
+  public string Type { get; private set; } = null!;
+  public string? Description { get; private set; }
+  
+  private Location() { }
 
-  public Location(int id, string name, string type)
-    : base(id)
+  public Location(string name, string type, string? description = null)
   {
     Name = name;
     Type = type;
+    Description = description;
   }
 }

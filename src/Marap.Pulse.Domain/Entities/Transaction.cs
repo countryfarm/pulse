@@ -3,16 +3,18 @@ using Marap.Pulse.Domain.ValueObjects;
 
 namespace Marap.Pulse.Domain.Entities;
 
-public class Transaction : Entity<int>
+public class Transaction : Entity<TransactionId>
 {
-    public int PartId { get; private set; }
-    public ChangeAmount ChangeAmount { get; private set; }
-    public int LocationId { get; private set; }
-    public string Type { get; private set; } // e.g. Receipt, Consume, Adjust
+    public PartId PartId { get; private set; }
+    public Part Part { get; private set; } = null!;
+    public ChangeAmount ChangeAmount { get; private set; } = null!;
+    public LocationId LocationId { get; private set; }
+    public TransactionType Type { get; private set; }
     public DateTime Timestamp { get; private set; }
+    
+    private Transaction() { }
 
-    public Transaction(int id, int partId, ChangeAmount changeAmount, int locationId, string type, DateTime timestamp)
-        : base(id)
+    public Transaction(PartId partId, ChangeAmount changeAmount, LocationId locationId, TransactionType type, DateTime timestamp)
     {
         PartId = partId;
         ChangeAmount = changeAmount;

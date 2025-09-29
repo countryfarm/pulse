@@ -1,3 +1,4 @@
+using Marap.Pulse.Domain.Common;
 using Marap.Pulse.Domain.Entities;
 using Marap.Pulse.Domain.ValueObjects;
 
@@ -10,11 +11,10 @@ public class InventoryService
     PurchaseOrderLine line,
     Location location,
     DateTime receivedAt,
-    int purchaseOrderId,
-    int vendorId)
+    PurchaseOrderId purchaseOrderId,
+    VendorId vendorId)
   {
     var stockItem = new StockItem(
-      id: GenerateId(),
       partId: line.PartId,
       quantity: line.OrderedQuantity,
       receivedAt: receivedAt,
@@ -46,11 +46,5 @@ public class InventoryService
 
     if (remaining > 0)
       throw new InvalidOperationException("Not enough stock to consume.");
-  }
-
-  private int GenerateId()
-  {
-    // Replace with your ID generation logic
-    return new Random().Next(1000, 9999);
   }
 }

@@ -1,7 +1,9 @@
 using FluentAssertions;
+using Marap.Pulse.Domain.Common;
 using Marap.Pulse.Domain.Entities;
 using Marap.Pulse.Domain.Events;
 using Marap.Pulse.Domain.ValueObjects;
+using Marap.Pulse.Domain.Tests.Factories;
 
 namespace Marap.Pulse.Domain.Tests.Entities;
 
@@ -10,8 +12,9 @@ public class PartTests
   [Fact]
   public void AddStock_ShouldIncreaseTotalQuantity()
   {
-    var part = new Part(1, "SKU-001", "MPN-001", "Test Part", new Quantity(10));
-    var stock = new StockItem(1, part.Id, new Quantity(5m), DateTime.UtcNow, locationId: 1);
+    var part = PartFactory.CreateWithId(PartId.From(1), "SKU-001", "MPN-001", "Test Part", new Quantity(10));
+    var location = LocationFactory.CreateWithId(LocationId.From(1), "Main Bin", "Bin");    
+    var stock = StockItemFactory.CreateWithId(StockItemId.From(1), part.Id, location.Id, new Quantity(5m), DateTime.UtcNow);
 
     part.AddStock(stock);
 
@@ -21,9 +24,12 @@ public class PartTests
 
   [Fact]
   public void IsBelowThreshold_ShouldReturnTrue_WhenStockIsLow()
-  {
-    var part = new Part(2, "SKU-002", "MPN-002", "Test Part", new Quantity(10));
-    part.AddStock(new StockItem(2, part.Id, new Quantity(5m), DateTime.UtcNow, locationId: 1));
+  {    
+    var part = PartFactory.CreateWithId(PartId.From(2), "SKU-002", "MPN-002", "Test Part", new Quantity(10));
+   
+    var location = LocationFactory.CreateWithId(LocationId.From(1), "Main Bin", "Bin");
+    var stockItem = StockItemFactory.CreateWithId(StockItemId.From(2), part.Id, location.Id, new Quantity(5m), DateTime.UtcNow);    
+    part.AddStock(stockItem);
 
     part.IsBelowThreshold().Should().BeTrue();
   }
@@ -31,8 +37,12 @@ public class PartTests
   [Fact]
   public void IsBelowThreshold_ShouldReturnFalse_WhenStockIsSufficient()
   {
-    var part = new Part(3, "SKU-003", "MPN-003", "Test Part", new Quantity(10));
-    part.AddStock(new StockItem(3, part.Id, new Quantity(15m), DateTime.UtcNow, locationId: 1));
+
+    var part = PartFactory.CreateWithId(PartId.From(3), "SKU-003", "MPN-003", "Test Part", new Quantity(10));
+
+    var location = LocationFactory.CreateWithId(LocationId.From(1), "Main Bin", "Bin");
+    var stockItem = StockItemFactory.CreateWithId(StockItemId.From(3), part.Id, location.Id, new Quantity(15m), DateTime.UtcNow);    
+    part.AddStock(stockItem);
 
     part.IsBelowThreshold().Should().BeFalse();
   }
@@ -40,8 +50,11 @@ public class PartTests
   [Fact]
   public void Consume_ShouldRaisePartConsumedEvent()
   {
-    var part = new Part(1, "SKU-001", "MPN-001", "Test Part", new Quantity(5));
-    part.AddStock(new StockItem(1, part.Id, new Quantity(10m), DateTime.UtcNow, locationId: 1));
+    var part = PartFactory.CreateWithId(PartId.From(4), "SKU-004", "MPN-004", "Test Part", new Quantity(5));
+    
+    var location = LocationFactory.CreateWithId(LocationId.From(1), "Main Bin", "Bin");
+    var stockItem = StockItemFactory.CreateWithId(StockItemId.From(4), part.Id, location.Id, new Quantity(10m), DateTime.UtcNow);    
+    part.AddStock(stockItem);
 
     part.Consume(new Quantity(3m));
 
@@ -50,10 +63,16 @@ public class PartTests
   
   [Fact]
   public void Consume_ShouldDepleteFirstStockItemBeforeUsingNext()
-  {
-    var part = new Part(1, "SKU-001", "MPN-001", "Test Part", new Quantity(5));
-    part.AddStock(new StockItem(1, part.Id, new Quantity(2m), DateTime.UtcNow.AddDays(-1), locationId: 1));
-    part.AddStock(new StockItem(2, part.Id, new Quantity(5m), DateTime.UtcNow, locationId: 1));
+  {    
+    var part = PartFactory.CreateWithId(PartId.From(5), "SKU-005", "MPN-005", "Test Part", new Quantity(5));
+    
+    var location = LocationFactory.CreateWithId(LocationId.From(1), "Main Bin", "Bin");
+    
+    var earlierItem = StockItemFactory.CreateWithId(StockItemId.From(1), part.Id, location.Id, new Quantity(2m), DateTime.UtcNow.AddDays(-1));  
+    part.AddStock(earlierItem);
+    
+    var laterItem = StockItemFactory.CreateWithId(StockItemId.From(2), part.Id, location.Id, new Quantity(5m), DateTime.UtcNow);    
+    part.AddStock(laterItem);
 
     part.Consume(new Quantity(4m));
 
@@ -66,8 +85,11 @@ public class PartTests
   [Fact]
   public void Consume_ShouldThrow_WhenNotEnoughStock()
   {
-    var part = new Part(1, "SKU-001", "MPN-001", "Test Part", new Quantity(5));
-    part.AddStock(new StockItem(1, part.Id, new Quantity(2m), DateTime.UtcNow, locationId: 1));
+    var part = PartFactory.CreateWithId(PartId.From(6), "SKU-006", "MPN-006", "Test Part", new Quantity(5));
+
+    var location = LocationFactory.CreateWithId(LocationId.From(1), "Main Bin", "Bin");
+    var stockItem = StockItemFactory.CreateWithId(StockItemId.From(6), part.Id, location.Id, new Quantity(2m), DateTime.UtcNow);    
+    part.AddStock(stockItem);
 
     Action act = () => part.Consume(new Quantity(5m));
 
@@ -78,8 +100,11 @@ public class PartTests
   [Fact]
   public void Consume_ShouldRaiseLowStockDetected_WhenBelowThreshold()
   {
-    var part = new Part(1, "SKU-001", "MPN-001", "Test Part", new Quantity(5));
-    part.AddStock(new StockItem(1, part.Id, new Quantity(6m), DateTime.UtcNow, locationId: 1));
+    var part = PartFactory.CreateWithId(PartId.From(7), "SKU-007", "MPN-007", "Test Part", new Quantity(5));
+    
+    var location = LocationFactory.CreateWithId(LocationId.From(1), "Main Bin", "Bin");
+    var stockItem = StockItemFactory.CreateWithId(StockItemId.From(7), part.Id, location.Id, new Quantity(6m), DateTime.UtcNow);        
+    part.AddStock(stockItem);
 
     part.Consume(new Quantity(2m)); // leaves 4, below threshold
 
@@ -99,8 +124,11 @@ public class PartTests
   [Fact]
   public void ClearEvents_ShouldRemoveAllRaisedEvents()
   {
-    var part = new Part(1, "SKU-001", "MPN-001", "Test Part", new Quantity(5));
-    part.AddStock(new StockItem(1, part.Id, new Quantity(10m), DateTime.UtcNow, locationId: 1));
+    var part = PartFactory.CreateWithId(PartId.From(8), "SKU-008", "MPN-008", "Test Part", new Quantity(5));
+    
+    var location = LocationFactory.CreateWithId(LocationId.From(1), "Main Bin", "Bin");
+    var stockItem = StockItemFactory.CreateWithId(StockItemId.From(8), part.Id, location.Id, new Quantity(10m), DateTime.UtcNow);  
+    part.AddStock(stockItem);
 
     part.Consume(new Quantity(3m));
     part.Events.Should().NotBeEmpty();

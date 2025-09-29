@@ -3,8 +3,6 @@ Always in stock. Always on time.
 
 [![Build](https://github.com/countryfarm/pulse/actions/workflows/dotnet.yml/badge.svg)](https://github.com/countryfarm/pulse/actions/workflows/dotnet.yml)
 
-Here’s a concise, developer-friendly snippet you can drop straight into your repo’s **README.md**. It explains how to configure the connection string safely without committing secrets:
-
 ---
 
 ## Local Database Setup

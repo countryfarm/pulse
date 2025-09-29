@@ -4,23 +4,23 @@ using Marap.Pulse.Domain.ValueObjects;
 
 namespace Marap.Pulse.Domain.Entities;
 
-public class Part : Entity<int>, IAggregateRoot
+public class Part : Entity<PartId>, IAggregateRoot
 {
   private readonly List<StockItem> _stockItems = new();
   private readonly List<DomainEvent> _events = new();
   
-  public string Sku { get; private set; }
-  public string Mpn { get; private set; }
-  public string Description { get; private set; }
-  public Quantity MinimumThreshold { get; private set; }
+  public string Sku { get; private set; } = null!;
+  public string Mpn { get; private set; } = null!;
+  public string Description { get; private set; } = null!;
+  public Quantity MinimumThreshold { get; private set; } = null!;
   public Quantity TotalQuantity =>
-    new Quantity(_stockItems.Sum(s => s.Quantity.Value));
-  
+    new Quantity(_stockItems.Sum(s => s.Quantity.Value)); 
   public IReadOnlyCollection<DomainEvent> Events => _events.AsReadOnly();
   public IReadOnlyCollection<StockItem> StockItems => _stockItems.AsReadOnly();
+  
+  private Part() { }
 
-  public Part(int id, string sku, string mpn, string description, Quantity minimumThreshold)
-    : base(id)
+  public Part(string sku, string mpn, string description, Quantity minimumThreshold)
   {
     Sku = sku;
     Mpn = mpn;

@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marap.Pulse.Domain.Tests", "tests\Marap.Pulse.Domain.Tests\Marap.Pulse.Domain.Tests.csproj", "{104544AF-7902-4B9C-9499-8B32BAE8456B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marap.Pulse.Infrastructure", "src\Marap.Pulse.Infrastructure\Marap.Pulse.Infrastructure.csproj", "{56546967-616C-4176-9B21-7EBDE0637B71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marap.Pulse.Bootstrap", "src\Marap.Pulse.Bootstrap\Marap.Pulse.Bootstrap.csproj", "{D47651F5-9B35-4A74-AE5D-06A686AB35E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,30 @@ Global
 		{104544AF-7902-4B9C-9499-8B32BAE8456B}.Release|x64.Build.0 = Release|Any CPU
 		{104544AF-7902-4B9C-9499-8B32BAE8456B}.Release|x86.ActiveCfg = Release|Any CPU
 		{104544AF-7902-4B9C-9499-8B32BAE8456B}.Release|x86.Build.0 = Release|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Debug|x64.Build.0 = Debug|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Debug|x86.Build.0 = Debug|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Release|x64.ActiveCfg = Release|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Release|x64.Build.0 = Release|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Release|x86.ActiveCfg = Release|Any CPU
+		{56546967-616C-4176-9B21-7EBDE0637B71}.Release|x86.Build.0 = Release|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Debug|x64.Build.0 = Debug|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Debug|x86.Build.0 = Debug|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Release|x64.ActiveCfg = Release|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Release|x64.Build.0 = Release|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Release|x86.ActiveCfg = Release|Any CPU
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,5 +80,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{CE2F8471-0ECB-4209-B33B-37609D91A77D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{104544AF-7902-4B9C-9499-8B32BAE8456B} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{56546967-616C-4176-9B21-7EBDE0637B71} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{D47651F5-9B35-4A74-AE5D-06A686AB35E4} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal

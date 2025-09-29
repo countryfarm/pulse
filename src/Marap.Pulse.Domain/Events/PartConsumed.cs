@@ -5,10 +5,10 @@ namespace Marap.Pulse.Domain.Events;
 
 public class PartConsumed : DomainEvent
 {
-    public int PartId { get; }
+    public PartId PartId { get; }
     public Quantity Quantity { get; }
 
-    public PartConsumed(int partId, Quantity quantity)
+    public PartConsumed(PartId partId, Quantity quantity)
     {
         PartId = partId;
         Quantity = quantity;

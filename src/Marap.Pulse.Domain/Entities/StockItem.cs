@@ -3,24 +3,26 @@ using Marap.Pulse.Domain.ValueObjects;
 
 namespace Marap.Pulse.Domain.Entities;
 
-public class StockItem : Entity<int>
+public class StockItem : Entity<StockItemId>
 {
-  public int PartId { get; private set; }
-  public Quantity Quantity { get; private set; }
+  public PartId PartId { get; private set; }
+  public Part Part { get; private set; } = null!;
+  public Quantity Quantity { get; private set; } = null!;
   public DateTime ReceivedAt { get; private set; }
-  public int LocationId { get; private set; }
-  public int? PurchaseOrderId { get; private set; }
-  public int? VendorId { get; private set; }
+  public LocationId LocationId { get; private set; }
+  public Location Location { get; private set; } = null!;
+  public PurchaseOrderId? PurchaseOrderId { get; private set; }
+  public VendorId? VendorId { get; private set; }
+  
+  private StockItem() { }
 
   public StockItem(
-    int id,
-    int partId,
+    PartId partId,
     Quantity quantity,
     DateTime receivedAt,
-    int locationId,
-    int? purchaseOrderId = null,
-    int? vendorId = null)
-    : base(id)
+    LocationId locationId,
+    PurchaseOrderId? purchaseOrderId = default,
+    VendorId? vendorId = default)
   {
     PartId = partId;
     Quantity = quantity;

@@ -5,10 +5,10 @@ namespace Marap.Pulse.Domain.Events;
 
 public class LowStockDetected : DomainEvent
 {
-    public int PartId { get; }
+    public PartId PartId { get; }
     public Quantity CurrentQuantity { get; }
 
-    public LowStockDetected(int partId, Quantity currentQuantity)
+    public LowStockDetected(PartId partId, Quantity currentQuantity)
     {
         PartId = partId;
         CurrentQuantity = currentQuantity;

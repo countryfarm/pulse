@@ -2,13 +2,14 @@ using Marap.Pulse.Domain.Common;
 
 namespace Marap.Pulse.Domain.Entities;
 
-public class Vendor : Entity<int>
+public class Vendor : Entity<VendorId>
 {
-    public string Name { get; private set; }
+    public string Name { get; private set; } = null!;
     public int LeadTimeDays { get; private set; }
+    
+    private Vendor() { }
 
-    public Vendor(int id, string name, int leadTimeDays)
-        : base(id)
+    public Vendor(string name, int leadTimeDays)
     {
         Name = name;
         LeadTimeDays = leadTimeDays;

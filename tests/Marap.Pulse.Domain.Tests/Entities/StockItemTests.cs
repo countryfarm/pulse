@@ -1,6 +1,8 @@
 using FluentAssertions;
+using Marap.Pulse.Domain.Common;
 using Marap.Pulse.Domain.Entities;
 using Marap.Pulse.Domain.ValueObjects;
+using Marap.Pulse.Domain.Tests.Factories;
 
 namespace Marap.Pulse.Domain.Tests.Entities;
 
@@ -9,7 +11,9 @@ public class StockItemTests
   [Fact]
   public void Consume_ShouldReduceQuantity_WhenEnoughStockExists()
   {
-    var item = new StockItem(1, 1, new Quantity(10m), DateTime.UtcNow, locationId: 1);
+    var location = LocationFactory.CreateWithId(LocationId.From(1), "Bin", "Test location");
+    var part = PartFactory.CreateWithId(PartId.From(1), "SKU-001", "MPN-001", "Test Part", new Quantity(10));
+    var item = StockItemFactory.CreateWithId(StockItemId.From(1), part.Id, location.Id, new Quantity(10m), DateTime.UtcNow);
     item.Consume(new Quantity(4m));
 
     item.Quantity.Value.Should().Be(6m);
@@ -18,11 +22,30 @@ public class StockItemTests
   [Fact]
   public void Consume_ShouldThrow_WhenNotEnoughStock()
   {
-    var item = new StockItem(2, 1, new Quantity(5m), DateTime.UtcNow, locationId: 1);
+    var part = PartFactory.CreateWithId(PartId.From(1), "SKU-001", "MPN-001", "Test Part", new Quantity(5m));
+    var location = LocationFactory.CreateWithId(LocationId.From(1), "Main Bin", "Bin");
+    var stockItem = StockItemFactory.CreateWithId(StockItemId.From(2), part.Id, location.Id, new Quantity(5m), DateTime.UtcNow);
 
-    Action act = () => item.Consume(new Quantity(10m));
+    Action act = () => stockItem.Consume(new Quantity(10m));
 
     act.Should().Throw<InvalidOperationException>()
        .WithMessage("Not enough stock available.");
+  }
+  
+  [Fact]
+  public void StockItem_ShouldAllowOptionalPurchaseOrder()
+  {
+    var part = PartFactory.CreateWithId(PartId.From(1), "SKU-001", "MPN-001", "Test Part", new Quantity(5m));
+    var location = LocationFactory.CreateWithId(LocationId.From(1), "Main Bin", "Bin");
+
+    var stockItem = StockItemFactory.CreateWithId(
+      StockItemId.From(1),
+      part.Id,
+      location.Id,
+      new Quantity(5m),
+      poId: PurchaseOrderId.From(10) // optional
+    );
+
+    stockItem.PurchaseOrderId.Should().Be(PurchaseOrderId.From(10));
   }
 }
