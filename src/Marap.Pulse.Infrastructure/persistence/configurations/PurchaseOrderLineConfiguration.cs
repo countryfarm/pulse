@@ -1,4 +1,5 @@
 using Marap.Pulse.Domain.Entities;
+using Marap.Pulse.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,15 +13,21 @@ public class PurchaseOrderLineConfiguration : EntityConfiguration<PurchaseOrderL
   {
     base.Configure(builder);
 
-    builder.OwnsOne(l => l.OrderedQuantity, q =>
-    {
-      q.Property(x => x.Value).HasColumnName("OrderedQuantity").IsRequired();
-    });
+    builder.Property(o => o.OrderedQuantity)
+      .HasVogenConversion(
+        vo => vo.Value,
+        raw => Quantity.From(raw)
+      )
+       .HasColumnName("OrderedQuantity")
+       .IsRequired();
 
-    builder.OwnsOne(l => l.ReceivedQuantity, q =>
-    {
-      q.Property(x => x.Value).HasColumnName("ReceivedQuantity");
-    });
+    builder.Property(r => r.ReceivedQuantity)
+      .HasVogenConversion(
+        vo => vo.Value,
+        raw => Quantity.From(raw)
+      )
+      .HasColumnName("ReceivedQuantity")
+      .IsRequired(false);
 
     // Foreign key conversions
     builder.Property(l => l.PartId)

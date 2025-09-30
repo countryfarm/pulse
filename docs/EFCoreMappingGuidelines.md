@@ -9,8 +9,8 @@ These guidelines define how we map our **domain entities** to the database using
 - **Domain purity**: Entities and value objects remain free of EF attributes.  
 - **Per‑entity configuration**: Each entity has its own `IEntityTypeConfiguration<TEntity>` in `Infrastructure/Persistence/Configurations`.  
 - **Transparency**: One file per entity, predictable naming.  
-- **Strong typing**: All IDs are strongly‑typed (Vogen).  
-- **Explicitness**: Value objects and enums are mapped deliberately.  
+- **Strong typing**: All IDs and value objects are strongly‑typed (Vogen).  
+- **Explicitness**: Value objects, enums, and conversions are mapped deliberately.  
 - **Minimalism**: Only business‑meaningful properties appear in diagrams/docs.  
 
 ---
@@ -38,10 +38,30 @@ These guidelines define how we map our **domain entities** to the database using
   - **Non‑nullable** IDs → simple conversion.  
   - **Nullable** IDs → use a `ValueConverter<TId?,TPrimitive?>` to handle nulls safely.  
 
-### Value Objects
+### Value Objects (Vogen)
 
-- Mapped as **owned types**.  
-- Always map the primitive property explicitly (`q.Property(x => x.Value).HasColumnName("...")`).  
+- **Do not use `OwnsOne`** for Vogen structs. Treat them as scalar properties.  
+- Map with `.Property(e => e.VoProperty).HasVogenConversion(...)`.  
+- Use the shared extension methods:  
+  - **Non‑nullable**:  
+    ```csharp
+    builder.Property(e => e.MinimumThreshold)
+      .HasVogenConversion(
+        vo  => vo.Value,
+        raw => Quantity.From(raw))
+      .HasColumnName("MinimumThreshold")
+      .IsRequired();
+    ```
+  - **Nullable**:  
+    ```csharp
+    builder.Property(e => e.ReceivedQuantity)
+      .HasVogenConversion(
+        vo  => vo.Value,
+        raw => Quantity.From(raw))
+      .HasColumnName("ReceivedQuantity")
+      .IsRequired(false);
+    ```
+- This ensures EF Core stores the primitive (`decimal`, `string`, etc.) while the domain works with the VO.
 
 ### Enums
 
@@ -86,12 +106,12 @@ public class PurchaseOrderConfiguration
 
     builder.Property(po => po.OrderDate).IsRequired();
 
-    builder.OwnsOne(po => po.Status, status =>
-    {
-      status.Property(s => s.Value)
-        .HasColumnName("Status")
-        .IsRequired();
-    });
+    builder.Property(po => po.Status)
+      .HasVogenConversion(
+        vo  => vo.Value,
+        raw => PurchaseOrderStatus.From(raw))
+      .HasColumnName("Status")
+      .IsRequired();
 
     builder.Property(po => po.VendorId)
       .HasConversion(id => id.Value, value => VendorId.From(value));
@@ -105,10 +125,10 @@ public class PurchaseOrderConfiguration
 
 ## 🚦 Adding a New Entity
 
-1. Create the entity in `Domain/Entities` with a strongly‑typed ID.  
+1. Create the entity in `Domain/Entities` with a strongly‑typed ID and any Vogen value objects.  
 2. Add a config class in `Infrastructure/Persistence/Configurations`.  
 3. Inherit from `EntityConfiguration<TEntity, TId, TPrimitive>`.  
-4. Map scalar properties, owned value objects, relationships, and ignores.  
+4. Map scalar properties, value objects (with `HasVogenConversion`), relationships, and ignores.  
 5. For nullable FKs, use a `ValueConverter<TId?,TPrimitive?>`.  
 6. Run `dotnet ef migrations add <Name>` to validate mapping.  
 7. Update diagrams + docs.  
@@ -121,3 +141,4 @@ public class PurchaseOrderConfiguration
 - **Clarity**: Easy for new developers to find and understand mappings.  
 - **Extensibility**: Adding new entities or value objects is straightforward.  
 - **Safety**: Strong typing enforced at both domain and persistence layers.  
+- **Correctness**: Vogen value objects are persisted as primitives, avoiding EF Core owned‑type pitfalls.  

@@ -1,4 +1,5 @@
 using Marap.Pulse.Domain.Entities;
+using Marap.Pulse.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,10 +17,13 @@ public class PartConfiguration : EntityConfiguration<Part, PartId, int>
     builder.Property(p => p.Mpn).HasMaxLength(100);
     builder.Property(p => p.Description).HasMaxLength(500);
 
-    builder.OwnsOne(p => p.MinimumThreshold, q =>
-    {
-      q.Property(x => x.Value).HasColumnName("MinimumThreshold").IsRequired();
-    });
+    builder.Property(p => p.MinimumThreshold)
+      .HasConversion(
+        vo => vo.Value,                      // Quantity ? decimal
+        raw => Quantity.From(raw)            // decimal ? Quantity
+      )
+      .HasColumnName("MinimumThreshold")
+      .IsRequired();
 
     builder.Ignore(p => p.TotalQuantity);
     builder.Ignore(p => p.Events);

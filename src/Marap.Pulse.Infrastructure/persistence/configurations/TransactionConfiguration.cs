@@ -1,4 +1,5 @@
 using Marap.Pulse.Domain.Entities;
+using Marap.Pulse.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,10 +15,14 @@ public class TransactionConfiguration : EntityConfiguration<Transaction, Transac
 
     builder.Property(t => t.Timestamp).IsRequired();
 
-    builder.OwnsOne(t => t.ChangeAmount, q =>
-    {
-      q.Property(x => x.Value).HasColumnName("ChangeAmount").IsRequired();
-    });
+    builder
+      .Property(t => t.ChangeAmount)
+      .HasVogenConversion(
+        vo => vo.Value,
+        raw => ChangeAmount.From(raw)
+      )
+      .HasColumnName("ChangeAmount")
+      .IsRequired();
 
     builder.Property(t => t.Type)
       .HasConversion<string>()

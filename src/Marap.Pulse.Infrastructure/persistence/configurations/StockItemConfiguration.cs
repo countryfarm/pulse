@@ -1,4 +1,5 @@
 using Marap.Pulse.Domain.Entities;
+using Marap.Pulse.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -14,11 +15,14 @@ public class StockItemConfiguration : EntityConfiguration<StockItem, StockItemId
     base.Configure(builder);
 
     builder.Property(s => s.ReceivedAt).IsRequired();
-
-    builder.OwnsOne(s => s.Quantity, q =>
-    {
-      q.Property(x => x.Value).HasColumnName("Quantity").IsRequired();
-    });
+    
+    builder.Property(q => q.Quantity)
+      .HasVogenConversion(
+        vo => vo.Value,
+        raw => Quantity.From(raw)
+       )
+       .HasColumnName("Quantity")
+       .IsRequired();
 
     // Foreign key conversions
     builder.Property(s => s.PartId)
