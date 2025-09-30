@@ -1,14 +1,14 @@
+using Vogen;
+
 namespace Marap.Pulse.Domain.ValueObjects;
 
-public record ChangeAmount
+[ValueObject(typeof(decimal))]
+public partial struct ChangeAmount
 {
-    public decimal Value { get; }
-
-    public ChangeAmount(decimal value)
-    {
-        if (value == 0) throw new ArgumentException("Change Amount cannot be zero.");
-        Value = value;
-    }
+    private static Validation Validate(decimal value) =>
+        value == 0
+            ? Validation.Invalid("Change Amount cannot be zero.")
+            : Validation.Ok;
 
     public bool IsIncrease => Value > 0;
     public bool IsDecrease => Value < 0;

@@ -13,8 +13,8 @@ public class PurchaseOrderTests
   {
     var vendor = VendorFactory.CreateWithId(VendorId.From(1), "Test Vendor", 5);
     var po = PurchaseOrderFactory.CreateWithId(PurchaseOrderId.From(1), vendor.Id, DateTime.UtcNow, PurchaseOrderStatus.Submitted);
-    var part = PartFactory.CreateWithId(PartId.From(5), "SKU-001", "MPN-001", "Test Part", new Quantity(5m));
-    var line = PurchaseOrderLineFactory.CreateWithId(PurchaseOrderLineId.From(1), part.Id, new Quantity(20m), po.Id);
+    var part = PartFactory.CreateWithId(PartId.From(5), "SKU-001", "MPN-001", "Test Part", Quantity.From(5m));
+    var line = PurchaseOrderLineFactory.CreateWithId(PurchaseOrderLineId.From(1), part.Id, Quantity.From(20m), po.Id);
 
     po.AddLine(line);
 

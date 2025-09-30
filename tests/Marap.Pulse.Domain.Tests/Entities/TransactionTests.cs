@@ -11,9 +11,9 @@ public class TransactionTests
   [Fact]
   public void Transaction_ShouldStoreProperties()
   {
-    var part = PartFactory.CreateWithId(PartId.From(2), "SKU-001", "MPN-001", "Test Part", new Quantity(5m));
+    var part = PartFactory.CreateWithId(PartId.From(2), "SKU-001", "MPN-001", "Test Part", Quantity.From(5m));
     var location = LocationFactory.CreateWithId(LocationId.From(1), "Main Bin", "Bin");
-    var tx = TransactionFactory.CreateWithId(TransactionId.From(1), part.Id, new ChangeAmount(5m), location.Id, TransactionType.Receipt, DateTime.UtcNow);
+    var tx = TransactionFactory.CreateWithId(TransactionId.From(1), part.Id, ChangeAmount.From(5m), location.Id, TransactionType.Receipt, DateTime.UtcNow);
 
     tx.PartId.Should().Be(PartId.From(2));
     tx.ChangeAmount.Value.Should().Be(5m);

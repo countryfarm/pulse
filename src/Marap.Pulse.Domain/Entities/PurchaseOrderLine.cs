@@ -7,7 +7,7 @@ public class PurchaseOrderLine : Entity<PurchaseOrderLineId>
 {
   public PartId PartId { get; private set; }
   public Part Part { get; private set; } = null!;
-  public Quantity OrderedQuantity { get; private set; } = null!;
+  public Quantity OrderedQuantity { get; private set; }
   public Quantity? ReceivedQuantity { get; private set; }
   public PurchaseOrderId PurchaseOrderId { get; private set; }
   public PurchaseOrder? PurchaseOrder { get; private set; }

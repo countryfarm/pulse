@@ -40,7 +40,7 @@ public class InventoryService
       if (remaining <= 0) break;
 
       var consumeQty = Math.Min(item.Quantity.Value, remaining);
-      item.Consume(new Quantity(consumeQty));
+      item.Consume(Quantity.From(consumeQty));
       remaining -= consumeQty;
     }
 

@@ -12,9 +12,9 @@ public class Part : Entity<PartId>, IAggregateRoot
   public string Sku { get; private set; } = null!;
   public string Mpn { get; private set; } = null!;
   public string Description { get; private set; } = null!;
-  public Quantity MinimumThreshold { get; private set; } = null!;
+  public Quantity MinimumThreshold { get; private set; }
   public Quantity TotalQuantity =>
-    new Quantity(_stockItems.Sum(s => s.Quantity.Value)); 
+    Quantity.From(_stockItems.Sum(s => s.Quantity.Value)); 
   public IReadOnlyCollection<DomainEvent> Events => _events.AsReadOnly();
   public IReadOnlyCollection<StockItem> StockItems => _stockItems.AsReadOnly();
   
@@ -43,10 +43,10 @@ public class Part : Entity<PartId>, IAggregateRoot
       if (qty.Value == 0) break;
 
       var toConsume = Math.Min(item.Quantity.Value, qty.Value);
-      item.Consume(new Quantity(toConsume));
-      qty = new Quantity(qty.Value - toConsume);
+      item.Consume(Quantity.From(toConsume));
+      qty = Quantity.From(qty.Value - toConsume);
 
-      AddEvent(new PartConsumed(Id, new Quantity(toConsume)));
+      AddEvent(new PartConsumed(Id, Quantity.From(toConsume)));
     }
 
     if (qty.Value > 0)

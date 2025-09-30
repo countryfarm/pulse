@@ -7,7 +7,7 @@ public class StockItem : Entity<StockItemId>
 {
   public PartId PartId { get; private set; }
   public Part Part { get; private set; } = null!;
-  public Quantity Quantity { get; private set; } = null!;
+  public Quantity Quantity { get; private set; }
   public DateTime ReceivedAt { get; private set; }
   public LocationId LocationId { get; private set; }
   public Location Location { get; private set; } = null!;
@@ -37,6 +37,6 @@ public class StockItem : Entity<StockItemId>
     if (qty.Value > Quantity.Value)
       throw new InvalidOperationException("Not enough stock available.");
 
-    Quantity = new Quantity(Quantity.Value - qty.Value);
+    Quantity = Quantity.From(Quantity.Value - qty.Value);
   }
 }

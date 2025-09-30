@@ -10,7 +10,7 @@ public class DomainEventsTests
   [Fact]
   public void PartConsumed_ShouldExposeProperties()
   {
-    var evt = new PartConsumed(PartId.From(1), new Quantity(5m));
+    var evt = new PartConsumed(PartId.From(1), Quantity.From(5m));
 
     evt.PartId.Should().Be(PartId.From(1));
     evt.Quantity.Value.Should().Be(5m);
@@ -19,7 +19,7 @@ public class DomainEventsTests
   [Fact]
   public void LowStockDetected_ShouldExposeProperties()
   {
-    var evt = new LowStockDetected(PartId.From(2), new Quantity(3m));
+    var evt = new LowStockDetected(PartId.From(2), Quantity.From(3m));
 
     evt.PartId.Should().Be(PartId.From(2));
     evt.CurrentQuantity.Value.Should().Be(3m);
