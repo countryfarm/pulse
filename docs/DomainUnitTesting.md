@@ -135,3 +135,36 @@ public class VendorTests
 ---
 
 ✅ With this approach, our unit tests remain robust, expressive, and aligned with our domain‑driven design.
+
+---
+
+## Test coverage (local workflow)
+
+The CI workflow (`.github/workflows/dotnet.yml`) runs coverage for the solution and enforces a minimum line coverage threshold. To make local developer workflow match CI, we've added small PowerShell helper scripts under `tools/tests` that run tests and coverage from the `tests` folder and place results next to each test project (not in the repository root).
+
+Files added:
+
+- `tools/tests/Run-UnitTests.ps1` — run all test projects under `tests` (no coverage).
+- `tools/tests/Run-Coverage.ps1` — run each test project with the XPlat coverage collector, generate a `coveragereport/Summary.txt` next to each test project, and enforce a threshold (default 70%).
+
+How it works
+
+- Each test project's `TestResults` and `coveragereport` are generated in the test project's directory (so build artifacts and coverage files are not written to the solution root).
+- The scripts install `dotnet-reportgenerator-globaltool` if not present and use it to create a `TextSummary` report from Cobertura XML produced by the XPlat collector.
+- The coverage script parses the generated `Summary.txt` and fails (non-zero exit code) when coverage is below the threshold.
+
+Quick run (PowerShell, from repository root):
+
+```powershell
+# Run tests only
+.\tools\tests\Run-UnitTests.ps1
+
+# Run coverage and enforce threshold (70% default)
+.\tools\tests\Run-Coverage.ps1
+```
+
+Notes & customization
+
+- To change the threshold, call `Run-Coverage.ps1 -Threshold 80.0` (for 80%).
+- If you prefer to run coverage only for a single test project, you can run `dotnet test <path-to-csproj> --collect:"XPlat Code Coverage" --results-directory <path-to-TestResults>` and then run ReportGenerator manually against the produced `coverage.cobertura.xml`.
+- The `tests/.gitignore` already excludes `TestResults/` and common coverage artifacts so they don't get committed.
