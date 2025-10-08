@@ -28,6 +28,7 @@ coverage.*
 *.coveragexml
 *.codecov
 *.lcov
+coveragereport/
 
 ## Docker
 **/.docker/
