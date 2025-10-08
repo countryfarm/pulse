@@ -12,3 +12,4 @@ preferred_commands:
 precommit_hook_path: "tools/tests/hooks/pre-commit.ps1"
 coverage_threshold: 70
 global_usings_file: "src/Marap.Pulse.Infrastructure/GlobalUsings.cs"
+bootstrap_project_purpose: "Exists only to run EF Core migrations and related bootstrap tasks; not intended to host runtime DI or API controllers. Do not add application service registrations here."
