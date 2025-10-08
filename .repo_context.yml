@@ -1,0 +1,14 @@
+# Machine-readable repository context for automated tools and assistants
+indent_size: 2
+file_level_namespaces: true
+dotnet_sdk: "9.x"
+test_framework: "xunit"
+architecture:
+  - DDD
+  - CleanArchitecture
+preferred_commands:
+  - "dotnet test"
+  - "pwsh .\tools\tests\Install-PreCommitHook.ps1"
+precommit_hook_path: "tools/tests/hooks/pre-commit.ps1"
+coverage_threshold: 70
+global_usings_file: "src/Marap.Pulse.Infrastructure/GlobalUsings.cs"
