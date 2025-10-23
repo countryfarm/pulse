@@ -168,3 +168,10 @@ Notes & customization
 - To change the threshold, call `Run-Coverage.ps1 -Threshold 80.0` (for 80%).
 - If you prefer to run coverage only for a single test project, you can run `dotnet test <path-to-csproj> --collect:"XPlat Code Coverage" --results-directory <path-to-TestResults>` and then run ReportGenerator manually against the produced `coverage.cobertura.xml`.
 - The `tests/.gitignore` already excludes `TestResults/` and common coverage artifacts so they don't get committed.
+
+---
+
+## Cross-project testing conventions
+
+All test projects (Domain, Application, Api integration tests) MUST use the same factory pattern when creating domain entities in tests. Copy the `Factories/EntityTestFactory.cs` helper into any new test project and implement thin per-entity factories that call `EntityTestFactory.WithId(...)` (see `PurchaseOrderFactory` in this repo). This ensures Vogen value objects are initialized consistently and keeps tests readable and maintainable.
+

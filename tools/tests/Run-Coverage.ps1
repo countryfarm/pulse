@@ -7,12 +7,28 @@ Usage: .\tools\tests\Run-Coverage.ps1
 param(
   [string]$TestsFolder = "tests",
   [string]$Configuration = "Release",
-  [double]$Threshold = 70.0
+  [double]$Threshold = 70.0,
+  [string[]]$SkipEnforce = @()
 )
 
-$testProjects = Get-ChildItem -Path $TestsFolder -Recurse -Filter "*.csproj" | Select-Object -ExpandProperty FullName
+$allProjects = Get-ChildItem -Path $TestsFolder -Recurse -Filter "*.csproj" | Select-Object -ExpandProperty FullName
+if (-not $allProjects) {
+  Write-Error "No project files found under '$TestsFolder'"
+  exit 2
+}
+
+# Filter to projects that look like test projects (contain xUnit or Microsoft.NET.Test.Sdk package refs)
+$testProjects = @()
+foreach ($proj in $allProjects) {
+  $content = Get-Content $proj -Raw -ErrorAction SilentlyContinue
+  if ($null -eq $content) { continue }
+  if ($content -match 'xunit' -or $content -match 'Microsoft.NET.Test.Sdk') {
+    $testProjects += $proj
+  }
+}
+
 if (-not $testProjects) {
-  Write-Error "No test projects found under '$TestsFolder'"
+  Write-Error "No test projects detected under '$TestsFolder' (no xUnit or Microsoft.NET.Test.Sdk references)"
   exit 2
 }
 
@@ -28,7 +44,7 @@ foreach ($proj in $testProjects) {
   if (-Not (Test-Path $resultsDir)) { New-Item -ItemType Directory -Path $resultsDir | Out-Null }
 
   Write-Host "Running tests with coverage for: $proj"
-  dotnet test $proj --no-build --configuration $Configuration --collect:"XPlat Code Coverage" --results-directory $resultsDir
+  dotnet test $proj --configuration $Configuration --collect:"XPlat Code Coverage" --results-directory $resultsDir
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
   # Generate report for this project
@@ -49,10 +65,19 @@ foreach ($proj in $testProjects) {
   $summary = Get-Content $summaryFile -Raw
   if ($summary -match 'Line coverage:\s*([0-9]+(?:\.[0-9]+)?)') {
     $coverage = [double]$matches[1]
-  Write-Host "Detected line coverage for $proj - $coverage%"
-    if ($coverage -lt $Threshold) {
+    Write-Host "Detected line coverage for $proj - $coverage%"
+
+    $shouldEnforce = $true
+    foreach ($pattern in $SkipEnforce) {
+      if ($proj -like $pattern) { $shouldEnforce = $false; break }
+    }
+
+    if ($shouldEnforce -and $coverage -lt $Threshold) {
       Write-Error "Coverage $coverage is below threshold $Threshold for project $proj"
       exit 1
+    }
+    elseif (-not $shouldEnforce) {
+      Write-Host "Skipping enforcement for $proj (matched SkipEnforce).";
     }
   } else {
     Write-Error "Could not parse coverage summary for $proj"
