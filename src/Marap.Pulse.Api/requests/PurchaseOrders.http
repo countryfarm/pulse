@@ -1,0 +1,18 @@
+@PulseApi = http://localhost:5044
+
+### Create a PurchaseOrder
+POST {{PulseApi}}/api/purchaseorders
+Content-Type: application/json
+
+{
+  "vendorId": 123,
+  "items": [
+    { "sku": "ABC-1", "quantity": 10 },
+    { "sku": "XYZ-2", "quantity": 5 }
+  ]
+}
+
+### Get created PurchaseOrder
+# Replace 1 with the returned id
+GET {{PulseApi}}/api/purchaseorders/1
+Accept: application/json
