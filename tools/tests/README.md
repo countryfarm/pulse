@@ -55,6 +55,11 @@ API / Integration test guidance
 
  - Integration tests that exercise the API using TestServer or WebApplicationFactory may need to run with an actual database (in-memory or test DB) and often have different coverage shapes. Use `-SkipEnforce` to exclude those projects from strict per-project thresholds and instead rely on the aggregated coverage run (`Run-AggregatedCoverage.ps1`) for final enforcement.
 
+Integration quickstart
+
+- HTTP request files for quick manual testing are available at `src/Marap.Pulse.Api/requests/PurchaseOrders.http` (usable with VS Code REST Client or import into Postman).
+- A Postgres docker-compose for local deep tests is at `tests/docker/docker-compose.postgres.yml` (ARM-friendly image). See `tests/integration/README.md` for a short start guide.
+
 ## Troubleshooting: Install-PreCommitHook.ps1
 
 - If you see ".git/hooks directory not found", run the installer from anywhere inside the repository — the installer now searches upward from the current working directory to locate the repo root automatically.
