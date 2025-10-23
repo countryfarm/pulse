@@ -24,6 +24,12 @@ Run per-project coverage & enforce threshold:
 .\tools\tests\Run-Coverage.ps1
 ```
 
+You can skip enforcement for specific projects (useful for integration/API test suites which may have different coverage expectations) with the `-SkipEnforce` parameter. Example (skip enforcement for Application tests):
+
+```powershell
+.\tools\tests\Run-Coverage.ps1 -SkipEnforce '*/Marap.Pulse.Application.Tests/*'
+```
+
 Run aggregated coverage (CI-like):
 
 ```powershell
@@ -43,7 +49,11 @@ Install pre-commit hook (optional):
 
 ## Notes
 
-- Pre-commit hook is optional and may slow commits if configured to run full coverage; the default hook runs a fast test-only check. Adjust as needed.
+ - Pre-commit hook is optional and may slow commits if configured to run full coverage; the default hook runs a fast test-only check. Adjust as needed.
+
+API / Integration test guidance
+
+ - Integration tests that exercise the API using TestServer or WebApplicationFactory may need to run with an actual database (in-memory or test DB) and often have different coverage shapes. Use `-SkipEnforce` to exclude those projects from strict per-project thresholds and instead rely on the aggregated coverage run (`Run-AggregatedCoverage.ps1`) for final enforcement.
 
 ## Troubleshooting: Install-PreCommitHook.ps1
 
